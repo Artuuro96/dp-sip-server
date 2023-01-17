@@ -1,0 +1,19 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "npx lerna bootstrap --hoist",
+    "bootstrap:dev": "npm run clean && npx lerna bootstrap --hoist && npm run build",
+    "build": "npx lerna run build",
+    "format": "npx lerna run format",
+    "test": "npx lerna run test",
+    "clean": "npx lerna clean --yes && npm run clean:dist",
+    "clean:dist": "npx lerna run clean:dist"
+  },
+  "devDependencies": {
+    "lerna": "^6.4.1"
+  }
+}
