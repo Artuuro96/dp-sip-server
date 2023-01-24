@@ -6,3 +6,7 @@ lerna-debug.log*
 
 # package-lock
 packages/**/package-lock.json
+
+/.mongodb
+.env
+packages/common-lib/tsconfig.build.tsbuildinfo

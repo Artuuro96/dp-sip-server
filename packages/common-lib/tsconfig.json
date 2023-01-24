@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "declaration": true,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./dist",
+        "rootDir": "./lib",
+        "skipLibCheck": true,
+        "incremental": true,
+        "baseUrl": "./",
+        "esModuleInterop": true,
+        "noUnusedLocals": true,
+        "declarationMap": true
+    },
+    "include": [
+        "../index.ts",
+        "lib/**/*"
+    ],
+    "exclude": ["dist", "node_modules"]
+}

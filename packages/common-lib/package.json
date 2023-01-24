@@ -1,0 +1,11 @@
+{
+  "name": "@promer/common-lib",
+  "version": "0.0.1",
+  "description": "Promer common library",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "author": "",
+  "license": "ISC"
+}
