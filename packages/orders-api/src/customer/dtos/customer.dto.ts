@@ -1,10 +1,14 @@
-import { IsDate, IsEmail, IsString, IsUrl } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsEmail, IsString, IsUrl, IsObject, IsOptional, IsNotEmpty, ValidateNested, IsNumber } from 'class-validator';
+import { AddressDTO } from './address.dto';
 
 export class CustomerDTO {
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsString()
+  @IsNotEmpty()
   lastName: string;
 
   @IsString()
@@ -12,27 +16,34 @@ export class CustomerDTO {
 
   @IsString()
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @IsString()
-  cellPhone: string;
+  @IsNumber()
+  @IsNotEmpty()
+  cellPhone: number;
+
+  @IsNumber()
+  phone: number;
 
   @IsString()
-  phone: string;
-
-  @IsString()
+  @IsNotEmpty()
   rfc: string;
 
   @IsString()
-  address1: string;
+  facebook?: string;
 
-  @IsString()
-  address2: string;
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AddressDTO)
+  address: AddressDTO;
 
   @IsString()
   birthday: string;
 
-  gender: string;
+  @IsString()
+  @IsOptional()
+  gender?: string;
 
   @IsUrl()
   avatar: string;

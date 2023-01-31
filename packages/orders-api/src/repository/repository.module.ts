@@ -12,7 +12,7 @@ const schemas = [
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/promer'),
+    MongooseModule.forRoot('mongodb://localhost:27017'),
     MongooseModule.forFeature(schemas),
   ],
   exports: [CustomerRepository],
