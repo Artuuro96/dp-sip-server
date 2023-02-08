@@ -2,12 +2,14 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CustomerDTO } from '../dtos/customer.dto';
 import { CustomerRepository } from '../../repository/repositories/customer.repository';
 import { Address, Customer } from '../../repository/schemas/customer.schema';
-const _ = require("lodash");  
-import { exampleOfUtility } from '@promer/common-lib';
+import { isNil } from 'lodash';
+import { PaginateResult } from 'src/repository/interfaces/paginate-result.interface';
+import { ProjectionType } from 'mongoose';
+
 
 @Injectable()
 export class CustomerService {
-  constructor(private readonly customerRepository: CustomerRepository) {}
+  constructor(private customerRepository: CustomerRepository) {}
 
   /**
    * @name create
@@ -15,38 +17,23 @@ export class CustomerService {
    * @description Creates a customer
    * @returns {Object} Returns the customer
    */
-  async create(customer: CustomerDTO): Promise<any> {
-    const customerExists = await this.customerRepository.find({email: customer.email},{
-      _id: 1,
-    })
+  async create(customer: CustomerDTO): Promise<Customer> {
+    const {address} = customer;
+    const query = { email: customer.email }
+    const projection = { _id: 1 }
+    const customerExists = await this.customerRepository.find({query, projection})
 
-    if(!_.isNil(customerExists[0]))
+    if(!isNil(customerExists[0]))
       throw new BadRequestException('Email already registered')
     
     const newAddress: Address = {
-      country: customer.address.country,
-      state: customer.address.state,
-      city: customer.address.city,
-      town: customer.address.town,
-      street: customer.address.street,
-      number: customer.address.number,
-      zip: customer.address.zip
+      ...address
     }
+    
     const newCustomer: Customer = {
-      name: customer.name,
-      lastName: customer.lastName,
-      secondLastName: customer.secondLastName,
-      email: customer.email,
-      cellPhone: customer.cellPhone,
-      phone: customer.phone,
-      rfc: customer.rfc,
-      facebook: customer.facebook,
+      ...customer,
       address: newAddress,
       birthday: new Date(customer.birthday),
-      gender: customer.gender,
-      avatar: customer.avatar,
-      deleted: false,
-      created_at: new Date(),
       created_by: '63d8b7c773867f515b7b8adb' //Until we know how to get the userID
     }
 
@@ -59,13 +46,42 @@ export class CustomerService {
    * @description Finds a customer with his ID
    * @returns {Object} Returns the customer found
    */
-  async findById(customerId): Promise<any> {
+  async findById(customerId): Promise<Customer> {
     const customerFound = await this.customerRepository.findById(customerId);
-    if(_.isNil(customerFound))
+    if(isNil(customerFound))
       throw new NotFoundException('User not found');
     if(customerFound.deleted)
       throw new NotFoundException('User not found');
     return customerFound;
+  }
+
+  /**
+   * @name findAll
+   * @param {string} keyValue Value that we need to search
+   * @param {number} skip Page of the paginate
+   * @param  {number} limit Limit of the document result
+   * @description Find all the customer paginated
+   * @returns {PaginateResult} Object with the customer paginate
+   */
+  async findAll(keyValue: string = '', skip: number = 0, limit?: number): Promise<PaginateResult> {
+    skip = Number(skip)
+    limit = Number(limit)
+    const options = {
+      skip: skip > 0? skip - 1 : skip,
+      limit
+    }
+    const query = {
+        name: new RegExp(`${keyValue}`, 'i'),
+    }
+
+    const customers = await this.customerRepository.find({query, options})
+    const countCustomers = await this.customerRepository.count(query)
+    return {
+      result: customers,
+      total: countCustomers,
+      page: skip,
+      pages: Math.ceil(countCustomers/limit)
+    }
   }
 
 
@@ -75,12 +91,12 @@ export class CustomerService {
    * @description Update the customer
    * @returns {Object} Returns the customer updated
    */
-  async update(customer, customerId): Promise<any> {
+  async update(customer, customerId): Promise<Customer> {
     const customerFound = await this.customerRepository.findById(customerId, {
       _id: 1,
       deleted: 1,
     });
-    if(_.isNil(customerFound))
+    if(isNil(customerFound))
       throw new NotFoundException('User not found');
     if(customerFound.deleted)
       throw new NotFoundException('User not found');
@@ -93,14 +109,14 @@ export class CustomerService {
    * @name delete
    * @param {string} customerId Id from the customer
    * @description Deletes the customer but not remove from the DB
-   * @returns {Object} Returns the result from the deletion
+   * @returns {Object} Returns the result from the conso
    */
-  async delete(customerId): Promise<any> {
+  async delete(customerId): Promise<Customer> {
     const customer = await this.customerRepository.findById(customerId, {
       _id: 1,
       deleted: 1,
     });
-    if(_.isNil(customer))
+    if(isNil(customer))
       throw new NotFoundException('User not found')
     if (customer.deleted)
       throw new BadRequestException('User already deleted' )

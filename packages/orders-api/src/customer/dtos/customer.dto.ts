@@ -34,7 +34,7 @@ export class CustomerDTO {
   facebook?: string;
 
   @IsObject()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => AddressDTO)
   address: AddressDTO;
 

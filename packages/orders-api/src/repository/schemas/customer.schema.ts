@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { Dependecies } from './dependecies.schema'
+import { Base } from './base'
 
 export type CustomerDocument = HydratedDocument<Customer>;
 
@@ -30,7 +30,7 @@ export class Address {
 }
 
 @Schema()
-export class Customer extends Dependecies {
+export class Customer extends Base {
   
   @Prop({required: true})
   name: string;
@@ -65,10 +65,15 @@ export class Customer extends Dependecies {
   birthday: Date;
 
   @Prop()
-  gender: string;
+  gender?: string;
 
   @Prop()
   avatar: string;
+
+  /*constructor(customer:Partial<Customer>) {
+    super(customer)
+    Object.assign(this, customer)
+  }*/
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

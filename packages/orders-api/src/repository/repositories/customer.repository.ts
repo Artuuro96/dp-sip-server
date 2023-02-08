@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CustomerDTO } from 'src/customer/dtos/customer.dto';
+import { isNil } from 'lodash';
 import { Customer, CustomerDocument } from '../schemas/customer.schema';
 
 export class CustomerRepository {
@@ -9,12 +9,28 @@ export class CustomerRepository {
   ) {}
 
   async create(customer: Customer): Promise<Customer> {
-    const createdCustomer = new this.customerModel(customer);
-    return createdCustomer.save();
+    return this.customerModel.create(customer)
   }
 
-  async find(query, projection?): Promise<Customer[]> {
-    return this.customerModel.find(query, projection);
+  async find(findOptiopns): Promise<Customer[]> {
+    const {query, projection, options} = findOptiopns;
+    const customerFind = this.customerModel.find(query)
+    if(!isNil(projection))
+      customerFind.projection(projection)
+    if(isNil(options))
+      return  customerFind
+    
+    const {limit, skip} = options
+    if(!isNil(limit))
+      customerFind.limit(limit)
+    if(!isNil(skip))
+      customerFind.skip(skip)
+
+    return  customerFind
+  }
+f
+  async count(query): Promise<any> {
+    return this.customerModel.count(query);
   }
 
   async findById(customerId, projection?): Promise<Customer> {
@@ -22,10 +38,10 @@ export class CustomerRepository {
   }
 
   async updateOne(customer): Promise<any> {
-    const updatedCustomer = new this.customerModel(customer);
-    return this.customerModel.updateOne(
-      { _id: updatedCustomer._id },
-      updatedCustomer,
+    return this.customerModel.findOneAndUpdate(
+      { _id: customer._id },
+      customer,
+      {new: true}
     );
   }
 }
