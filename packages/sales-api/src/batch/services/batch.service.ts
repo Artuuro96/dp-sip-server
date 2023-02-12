@@ -33,7 +33,7 @@ export class BatchService {
 
     const batchCreated = await this.batchRepository.create(newBatch);
     if (!isNil(batchCreated.land_ids)) {
-      await this.updateLand(newBatch._id, batchCreated.land_ids);
+      await this.updateLand(batchCreated._id, batchCreated.land_ids);
     }
 
     return batchCreated;
