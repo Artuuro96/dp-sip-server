@@ -3,8 +3,7 @@ import { CustomerDTO } from '../dtos/customer.dto';
 import { CustomerRepository } from '../../repository/repositories/customer.repository';
 import { Address, Customer } from '../../repository/schemas/customer.schema';
 import { isNil } from 'lodash';
-import { PaginateResult } from 'src/repository/interfaces/paginate-result.interface';
-import { ProjectionType } from 'mongoose';
+import { PaginateResult } from '../../repository/interfaces/paginate-result.interface';
 
 
 @Injectable()
@@ -48,10 +47,8 @@ export class CustomerService {
    */
   async findById(customerId): Promise<Customer> {
     const customerFound = await this.customerRepository.findById(customerId);
-    if(isNil(customerFound))
-      throw new NotFoundException('User not found');
-    if(customerFound.deleted)
-      throw new NotFoundException('User not found');
+    if(isNil(customerFound)) throw new NotFoundException('Customer not found');
+    if(customerFound.deleted) throw new NotFoundException('Customer not found');
     return customerFound;
   }
 
@@ -97,9 +94,9 @@ export class CustomerService {
       deleted: 1,
     });
     if(isNil(customerFound))
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Customer not found');
     if(customerFound.deleted)
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Customer not found');
     customer._id = customerId
     return this.customerRepository.updateOne(customer);
   }
@@ -109,7 +106,7 @@ export class CustomerService {
    * @name delete
    * @param {string} customerId Id from the customer
    * @description Deletes the customer but not remove from the DB
-   * @returns {Object} Returns the result from the conso
+   * @returns {Object} Returns the result from the deletion
    */
   async delete(customerId): Promise<Customer> {
     const customer = await this.customerRepository.findById(customerId, {
@@ -117,9 +114,9 @@ export class CustomerService {
       deleted: 1,
     });
     if(isNil(customer))
-      throw new NotFoundException('User not found')
+      throw new NotFoundException('Customer not found')
     if (customer.deleted)
-      throw new BadRequestException('User already deleted' )
+      throw new BadRequestException('Customer already deleted' )
     customer.deleted = true;
     return this.customerRepository.updateOne(customer);
   }

@@ -29,7 +29,7 @@ export class CustomerRepository {
     return  customerFind
   }
 f
-  async count(query): Promise<any> {
+  async count(query): Promise<number> {
     return this.customerModel.count(query);
   }
 
@@ -37,7 +37,7 @@ f
     return this.customerModel.findById(customerId, projection);
   }
 
-  async updateOne(customer): Promise<any> {
+  async updateOne(customer): Promise<Customer> {
     return this.customerModel.findOneAndUpdate(
       { _id: customer._id },
       customer,

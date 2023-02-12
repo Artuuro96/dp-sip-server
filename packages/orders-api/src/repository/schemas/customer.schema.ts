@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Base } from './base'
 
 export type CustomerDocument = HydratedDocument<Customer>;
@@ -31,6 +31,7 @@ export class Address {
 
 @Schema()
 export class Customer extends Base {
+  _id?: Types.ObjectId;
   
   @Prop({required: true})
   name: string;
