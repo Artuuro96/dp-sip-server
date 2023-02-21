@@ -12,7 +12,7 @@ export class Batch extends Base {
   name: string;
 
   @Prop([{ type: SchemaTypes.ObjectId }])
-  land_ids?: string[];
+  landIds?: string[];
 
   @Prop()
   description?: string;

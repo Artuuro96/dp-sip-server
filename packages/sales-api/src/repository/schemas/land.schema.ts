@@ -46,7 +46,7 @@ export class Land extends Base {
   price: number;
 
   @Prop({ type: SchemaTypes.ObjectId })
-  batch_id?: string;
+  batchId?: string;
 
   @Prop()
   size: string;

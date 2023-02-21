@@ -28,7 +28,7 @@ export class LandDTO {
 
   @IsString()
   @IsOptional()
-  batch_id?: string;
+  batchId?: string;
 
   @IsString()
   @IsNotEmpty()

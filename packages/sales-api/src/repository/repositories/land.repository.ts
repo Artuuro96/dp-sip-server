@@ -4,16 +4,14 @@ import { isNil } from 'lodash';
 import { Land, LandDocument } from '../schemas/land.schema';
 
 export class LandRepository {
-  constructor(
-    @InjectModel(Land.name) private landdModel: Model<LandDocument>,
-  ) {}
+  constructor(@InjectModel(Land.name) private landModel: Model<LandDocument>) {}
   async create(land: Land): Promise<Land> {
-    return this.landdModel.create(land);
+    return this.landModel.create(land);
   }
 
   async find(findOptiopns): Promise<Land[]> {
     const { query, projection, options } = findOptiopns;
-    const landFind = this.landdModel.find(query);
+    const landFind = this.landModel.find(query);
     if (!isNil(projection)) landFind.projection(projection);
     if (isNil(options)) return landFind;
 
@@ -25,15 +23,15 @@ export class LandRepository {
   }
 
   async count(query): Promise<number> {
-    return this.landdModel.count(query);
+    return this.landModel.count(query);
   }
 
   async findById(landId, projection?): Promise<Land> {
-    return this.landdModel.findById(landId, projection);
+    return this.landModel.findById(landId, projection);
   }
 
   async updateOne(land): Promise<Land> {
-    return this.landdModel.findOneAndUpdate({ _id: land._id }, land, {
+    return this.landModel.findOneAndUpdate({ _id: land._id }, land, {
       new: true,
     });
   }

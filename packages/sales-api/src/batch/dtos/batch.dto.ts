@@ -13,7 +13,7 @@ export class BatchDTO {
 
   @IsArray()
   @IsNotEmpty()
-  land_ids?: string[];
+  landIds?: string[];
 
   @IsString()
   @IsNotEmpty()

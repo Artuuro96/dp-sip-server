@@ -32,8 +32,8 @@ export class BatchService {
     };
 
     const batchCreated = await this.batchRepository.create(newBatch);
-    if (!isNil(batchCreated.land_ids)) {
-      await this.updateLand(batchCreated._id, batchCreated.land_ids);
+    if (!isNil(batchCreated.landIds)) {
+      await this.updateLand(batchCreated._id, batchCreated.landIds);
     }
 
     return batchCreated;
@@ -102,10 +102,10 @@ export class BatchService {
     if (isNil(batchFound)) throw new NotFoundException('Batch not found');
     if (batchFound.deleted) throw new NotFoundException('Batch not found');
 
-    batch._id = batchId;
+    batch.Id = batchId;
     const batchUpdated = await this.batchRepository.updateOne(batch);
-    if (!isNil(batchUpdated.land_ids)) {
-      await this.updateLand(batchFound._id, batchUpdated.land_ids);
+    if (!isNil(batchUpdated.landIds)) {
+      await this.updateLand(batchFound._id, batchUpdated.landIds);
     }
 
     return batchUpdated;
@@ -121,52 +121,52 @@ export class BatchService {
     const batch = await this.batchRepository.findById(batchId, {
       _id: 1,
       deleted: 1,
-      land_ids: 1,
+      landIds: 1,
     });
 
     if (isNil(batch)) throw new NotFoundException('Batch not found');
     if (batch.deleted) throw new BadRequestException('Batch already deleted');
 
-    if (!isNil(batch.land_ids)) {
-      batch.land_ids.forEach((landId) => {
+    if (!isNil(batch.landIds)) {
+      batch.landIds.forEach((landId) => {
         this.landService.delete(landId);
       });
     }
 
     batch.deleted = true;
-    batch.land_ids = [];
+    batch.landIds = [];
     return this.batchRepository.updateOne(batch);
   }
 
   /**
    * @name updateLand
    * @param {string} batchId
-   * @param {string[]} land_ids
+   * @param {string[]} landIds
    * @description Update the land and his respective batches
    * @returns
    */
-  async updateLand(batchId, land_ids: string[]): Promise<void> {
+  async updateLand(batchId, landIds: string[]): Promise<void> {
     const findOptiopns = {
       query: {
-        _id: { $in: land_ids },
+        Id: { $in: landIds },
       },
       projection: {
-        _id: 1,
-        batch_id: 1,
+        Id: 1,
+        batchId: 1,
         delete: 1,
       },
     };
     const landsFound = await this.landRepository.find(findOptiopns);
 
-    for (let x = 0; x < landsFound.length; x++) {
-      if (!isNil(landsFound[x].batch_id)) {
+    for (const land of landsFound) {
+      if (!isNil(land.batchId)) {
         await this.landService.deleteLandInBatch(
-          landsFound[x].batch_id,
-          landsFound[x]._id,
+          land.batchId,
+          land._id.toString(),
         );
       }
-      landsFound[x].batch_id = batchId;
-      await this.landRepository.updateOne(landsFound[x]);
+      land.batchId = batchId;
+      await this.landRepository.updateOne(land);
     }
     return;
   }
