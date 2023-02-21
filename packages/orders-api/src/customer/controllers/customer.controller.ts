@@ -5,7 +5,9 @@ import { CustomerDTO } from '../dtos/customer.dto';
 import { PaginationParamsDTO } from '../dtos/paginationParams.dto';
 import { CustomerService } from '../services/customer.service';
 
-@Controller()
+@Controller({
+  path: 'customers',
+})
 export class CustomerController {
   constructor(private customerService: CustomerService) {}
 

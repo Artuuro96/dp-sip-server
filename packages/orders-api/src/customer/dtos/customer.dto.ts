@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEmail, IsString, IsUrl, IsObject, IsOptional, IsNotEmpty, ValidateNested, IsNumber } from 'class-validator';
+import { IsEmail, IsString, IsUrl, IsObject, IsOptional, IsNotEmpty, ValidateNested, IsNumber } from 'class-validator';
 import { AddressDTO } from './address.dto';
 
 export class CustomerDTO {
